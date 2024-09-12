@@ -34,8 +34,6 @@ async function httpAbortLaunch(id) {
   
     return await fetch(`${API_URL}/launches/${id}`, {
       method:'delete',
-      
-
     });
 }
 

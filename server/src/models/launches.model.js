@@ -1,44 +1,79 @@
-const launches = new Map();
+const launches = require('./launches.schema')
+const planets = require('./planets.schema')
 
-let latestFlightNo = 10;
+
 const launch = {
-    mission : 'Kepler Exploration X',
+    mission : 'Paras Exploration X',
     rocket: 'Explorer IS1',
     launchDate: new Date('December 27, 2030'),
     target: 'Kepler-442 b',
-    flightNumber: latestFlightNo,
+    flightNumber: 10,
     customers: ['NASA', 'EPAM'],
     upcoming: true,
     success: true,
 }
 
 
-launches.set(launch.flightNumber, launch)
+saveLaunch(launch)
 
-let getLaunches = ()=>{
-    return Array.from(launches.values())
+async function getLatesFlightNumber(){
+    const latesLaunch = await launches.findOne().sort('-flightNumber');
+
+    if(!latesLaunch)    return 10;
+    return latesLaunch.flightNumber + 1;
+}
+
+let getLaunches = async ()=>{
+    return await launches.find({})
 }
 
 
-let addNewLaunch = function(launch){
-    latestFlightNo++;
+async function saveLaunch(launch){
+    const planet = await planets.findOne({
+        keplerName: launch.target
+    })
+
+    if(!planet){
+        return;
+    }
+
+    await launches.updateOne({
+        flightNumber: launch.flightNumber
+    }, launch,{upsert: true})
+}
+
+let addNewLaunch = async function(launch){
     
-    launches.set(latestFlightNo, Object.assign(launch, {
-        success:true,
-        upcoming: true,
-        flightNumber: latestFlightNo
-    }))
+    const latestFlightNumber = await getLatesFlightNumber();
+    Object.assign(launch, {
+            success:true,
+            upcoming: true,
+            flightNumber: latestFlightNumber
+        })
+
+
+    await saveLaunch(launch)
+
+
+    
+    // launches1.set(latestFlightNo, Object.assign(launch, {
+    //     success:true,
+    //     upcoming: true,
+    //     flightNumber: latestFlightNo
+    // }))
 }
 
 
-let deleteLaucnch = function(flightNumber){
-    let launch = launches.get(+flightNumber);
-    launch.upcoming = false;
-    launch.success = false;
-    return launch;
+let deleteLaunch = async function(launchId){
+    await launches.updateOne({
+        flightNumber: launchId
+    }, {
+        upcoming: false,
+        success: false
+    })
 }
 module.exports = {
    getLaunches,
    addNewLaunch,
-   deleteLaucnch
+   deleteLaunch
 }

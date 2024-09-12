@@ -1,26 +1,27 @@
-const {getLaunches, addNewLaunch, deleteLaucnch} = require('../models/launches.model')
+const {getLaunches, addNewLaunch, deleteLaunch} = require('../models/launches.model')
 
-const getAllLaunches = function(req,res){  
+const getAllLaunches = async function(req,res){  
 
-    return res.status(200).json(getLaunches())
+    return res.status(200).json(await getLaunches())
 
 }
 
 
-const createNewLaunch = function(req,res){
+const createNewLaunch = async function(req,res){
     let launch = req.body;
     console.log(launch)
     launch.launchDate = new Date(launch.launchDate);
-    addNewLaunch(launch);
+    await addNewLaunch(launch);
     return res.status(201).json(launch)
 
 }
 
+// vU182Skzxq7CZsGO
 
-const httpAbortLaunch = function(req,res){
+const httpAbortLaunch = async function(req,res){
 
     const launchId = req.params.id;
-    const response = deleteLaucnch(launchId);
+    const response = await deleteLaunch(launchId);
     res.status(200).json(response)
 }
 
