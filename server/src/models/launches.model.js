@@ -23,8 +23,8 @@ async function getLatesFlightNumber(){
     return latesLaunch.flightNumber + 1;
 }
 
-let getLaunches = async ()=>{
-    return await launches.find({})
+let getLaunches = async (limit, skip)=>{
+    return await launches.find({}).skip(skip).limit(limit)
 }
 
 

@@ -1,8 +1,9 @@
 const {getLaunches, addNewLaunch, deleteLaunch} = require('../models/launches.model')
-
+const {pagination} = require('./../services/query')
 const getAllLaunches = async function(req,res){  
 
-    return res.status(200).json(await getLaunches())
+    const {limit, skip} = pagination(req.query);
+    return res.status(200).json(await getLaunches(limit, skip))
 
 }
 
