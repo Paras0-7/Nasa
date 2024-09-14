@@ -10,4 +10,4 @@ function pagination(query){
 
 
 
-modules.exports = {pagination};
+module.exports = {pagination};
